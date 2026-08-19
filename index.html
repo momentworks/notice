@@ -448,7 +448,7 @@
   <div class="logo-mw">MW</div>
   <div class="logo-sub">MOMENT WORKS</div>
   <h1>하객 안내문 자동 생성</h1>
-  <p class="desc">축의대 설정서(PDF)를 올려주시면<br>7번 「하객 안내사항」 내용을 바탕으로<br>신랑측 · 신부측 데스크에 각각 게시할<br>A4 안내문 2장을 만들어 드립니다.</p>
+  <p class="desc">축의대 설정서(PDF)를 올려주시면<br>신랑·신부·혼주 성함부터 주차·ATM·연회장 등<br>설정서 전체 내용을 검토해 자동으로 채우고<br>신랑측 · 신부측 A4 안내문 2장을 만들어 드립니다.</p>
   <div class="dline"></div>
 </div>
 
@@ -805,11 +805,15 @@ const FIELD_DEFS = [
   {key:'hall', labels:['연회장 위치','연회장']},
   {key:'bride_room', labels:['신부대기실 위치','신부 대기실 위치','신부대기실']},
   {key:'meal_time', labels:['식사 가능 시간','식사 가능시간','식사시간']},
+  {key:'child_ticket', labels:['소인 식권의 나이 기준','소인식권 나이 기준','소인 식권 나이','소인식권']},
   {key:'groom', labels:['신랑 성함']},
   {key:'bride', labels:['신부 성함']},
   {key:'date', labels:['예식일']},
   {key:'venue', labels:['예식장명','예식장']},
-  {key:'hallname', labels:['홀 이름','홀이름']}
+  {key:'hallname', labels:['홀 이름','홀이름']},
+  {key:'groom_parent', labels:['[신랑측] 혼주 성함','신랑측 혼주 성함','신랑측 혼주']},
+  {key:'bride_parent', labels:['[신부측] 혼주 성함','신부측 혼주 성함','신부측 혼주']},
+  {key:'contractor', labels:['계약자 성함']}
 ];
 
 function extractFields(text){
@@ -824,7 +828,7 @@ function extractFields(text){
         const idx = line.indexOf(label);
         if(idx === -1) continue;
         let rest = line.slice(idx + label.length);
-        rest = rest.replace(/^[\s:：\-–|·]+/, '').trim();
+        rest = rest.replace(/^[\s:：\-–|]+/, '').trim();
         if(!rest && lines[i+1] && !FIELD_DEFS.some(d=>d.labels.some(l=>lines[i+1].includes(l)))){
           rest = lines[i+1].trim();
         }
@@ -837,17 +841,39 @@ function extractFields(text){
   return result;
 }
 
+/* 혼주 성함(신랑측/신부측)이 "아버지 · 어머니" 처럼 한 칸에 함께 적힌 경우 분리 */
+function splitParentNames(raw){
+  if(!raw) return {father:'', mother:''};
+  const parts = raw.split(/\s*(?:·|\/|,|、|및|그리고)\s*/).map(s=>s.trim()).filter(Boolean);
+  if(parts.length >= 2) return {father:parts[0], mother:parts[1]};
+  return {father:parts[0] || raw.trim(), mother:''};
+}
+
 function fillFormFromExtraction(found){
   const map = {
     groom:'f_groom', bride:'f_bride', date:'f_date',
     parking_way:'f_parking_way', parking_time:'f_parking_time',
-    atm:'f_atm', hall:'f_hall', bride_room:'f_bride_room', meal_time:'f_meal_time'
+    atm:'f_atm', hall:'f_hall', bride_room:'f_bride_room', meal_time:'f_meal_time',
+    child_ticket:'f_child_ticket'
   };
   Object.keys(map).forEach(k=>{
     if(found[k]) document.getElementById(map[k]).value = found[k];
   });
+
   const venueParts = [found.venue, found.hallname].filter(Boolean).join(' · ');
   if(venueParts) document.getElementById('f_venue').value = venueParts;
+
+  if(found.groom_parent){
+    const {father, mother} = splitParentNames(found.groom_parent);
+    if(father) document.getElementById('f_groom_father').value = father;
+    if(mother) document.getElementById('f_groom_mother').value = mother;
+  }
+  if(found.bride_parent){
+    const {father, mother} = splitParentNames(found.bride_parent);
+    if(father) document.getElementById('f_bride_father').value = father;
+    if(mother) document.getElementById('f_bride_mother').value = mother;
+  }
+
   updateSearchAssistState();
 }
 
