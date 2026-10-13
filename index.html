@@ -232,7 +232,7 @@
   }
   input::placeholder,textarea::placeholder{color:#B7AA98;font-size:13.5px;}
   input:focus,textarea:focus{outline:none;border-color:var(--rosegold);background:var(--white);}
-  input.ai-filled{background:#FFF6E5;border-color:var(--rosegold);}
+  input.ai-filled,textarea.ai-filled{background:#FFF6E5;border-color:var(--rosegold);}
 
   .side-tag{
     display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;
@@ -785,7 +785,7 @@
     <div class="section">
       <div class="sec-head"><div class="sec-icon-badge"><svg><use href="#i-car"/></svg></div><div class="sec-title">주차 정산</div></div>
       <div class="sec-note">신랑측·신부측 안내문에 동일하게 표시됩니다.</div>
-      <div class="field"><label class="flabel">주차 등록 방법</label><input type="text" id="f_parking_way" placeholder="예: 1층 데스크에서 셀프 등록"></div>
+      <div class="field"><label class="flabel">주차 등록 방법</label><textarea id="f_parking_way" rows="3" placeholder="예: 1층 데스크에서 셀프 등록&#10;줄바꿈하면 안내문에도 줄이 나뉘어 표시돼요"></textarea></div>
       <div class="field"><label class="flabel">무료 주차 시간</label><input type="text" id="f_parking_time" placeholder="예: 2시간 무료"></div>
       <div class="search-assist" data-mode="map" data-keyword="주차장">
         <span class="sa-label">빠른 검색</span>
@@ -797,7 +797,7 @@
 
     <div class="section">
       <div class="sec-head"><div class="sec-icon-badge"><svg><use href="#i-card"/></svg></div><div class="sec-title">ATM 위치</div></div>
-      <div class="field"><input type="text" id="f_atm" placeholder="예: 1층 로비 오른쪽"></div>
+      <div class="field"><textarea id="f_atm" rows="2" placeholder="예: 1층 로비 오른쪽&#10;줄바꿈하면 안내문에도 줄이 나뉘어 표시돼요"></textarea></div>
       <div class="search-assist" data-mode="map" data-keyword="ATM">
         <span class="sa-label">빠른 검색</span>
         <button type="button" class="sa-btn naver" data-engine="naver">네이버</button>
@@ -808,7 +808,7 @@
 
     <div class="section">
       <div class="sec-head"><div class="sec-icon-badge"><svg><use href="#i-pin"/></svg></div><div class="sec-title">연회장 위치</div></div>
-      <div class="field"><input type="text" id="f_hall" placeholder="예: 지하 1층"></div>
+      <div class="field"><textarea id="f_hall" rows="2" placeholder="예: 지하 1층&#10;줄바꿈하면 안내문에도 줄이 나뉘어 표시돼요"></textarea></div>
       <div class="search-assist" data-mode="map" data-keyword="오시는길 연회장">
         <span class="sa-label">빠른 검색</span>
         <button type="button" class="sa-btn naver" data-engine="naver">네이버</button>
@@ -819,7 +819,7 @@
 
     <div class="section">
       <div class="sec-head"><div class="sec-icon-badge"><svg><use href="#i-door"/></svg></div><div class="sec-title">신부대기실 위치</div></div>
-      <div class="field"><input type="text" id="f_bride_room" placeholder="예: 홀 맞은편"></div>
+      <div class="field"><textarea id="f_bride_room" rows="2" placeholder="예: 홀 맞은편&#10;줄바꿈하면 안내문에도 줄이 나뉘어 표시돼요"></textarea></div>
       <div class="search-assist" data-mode="search" data-keyword="신부대기실 위치">
         <span class="sa-label">빠른 검색</span>
         <button type="button" class="sa-btn naver" data-engine="naver">네이버</button>
@@ -830,7 +830,7 @@
 
     <div class="section">
       <div class="sec-head"><div class="sec-icon-badge"><svg><use href="#i-fork"/></svg></div><div class="sec-title">식사 가능 시간</div></div>
-      <div class="field"><input type="text" id="f_meal_time" placeholder="예: 예식 30분 전부터"></div>
+      <div class="field"><textarea id="f_meal_time" rows="2" placeholder="예: 예식 30분 전부터&#10;줄바꿈하면 안내문에도 줄이 나뉘어 표시돼요"></textarea></div>
       <div class="search-assist" data-mode="search" data-keyword="피로연 식사 시간">
         <span class="sa-label">빠른 검색</span>
         <button type="button" class="sa-btn naver" data-engine="naver">네이버</button>
@@ -842,7 +842,7 @@
     <div class="section">
       <div class="sec-head"><div class="sec-icon-badge"><svg><use href="#i-ticket"/></svg></div><div class="sec-title">소인식권</div></div>
       <div class="sec-note">적용 연령을 입력해 주세요.</div>
-      <div class="field"><input type="text" id="f_child_ticket" value="만 5세 ~ 만 7세" placeholder="예: 만 5세 ~ 만 7세"></div>
+      <div class="field"><textarea id="f_child_ticket" rows="2" placeholder="예: 만 5세 ~ 만 7세&#10;줄바꿈하면 안내문에도 줄이 나뉘어 표시돼요">만 5세 ~ 만 7세</textarea></div>
     </div>
 
     <div class="section">
@@ -1443,32 +1443,8 @@ function fmtDate(str){
   return `${m[1]}년 ${+m[2]}월 ${+m[3]}일 (${days[d.getDay()]})`;
 }
 
-/* ---------- PDF 저장 파일명용 날짜/계약자 이름 포맷 ----------
-   파일명에는 "/" 같은 문자를 쓸 수 없으므로 "YYYY.MM.DD" 형태로 정리하고,
-   계약자(신랑·신부) 이름은 폼에 입력된 두 성함을 조합해서 만든다. */
-function fmtDateForFilename(str){
-  if(!str) return '';
-  const m = str.match(/(\d{4})[.\-\/]\s*(\d{1,2})[.\-\/]\s*(\d{1,2})/);
-  if(!m) return str.replace(/[\\/:*?"<>|]/g, '.').trim();
-  return `${m[1]}.${String(+m[2]).padStart(2,'0')}.${String(+m[3]).padStart(2,'0')}`;
-}
-
-function getContractorNameForFilename(){
-  const groom = (document.getElementById('f_groom').value || '').trim();
-  const bride = (document.getElementById('f_bride').value || '').trim();
-  return [groom, bride].filter(Boolean).join('·');
-}
-
-function buildPrintFilename(){
-  const dateStr = fmtDateForFilename((document.getElementById('f_date').value || '').trim());
-  const nameStr = getContractorNameForFilename();
-  let name;
-  if(dateStr && nameStr) name = `${dateStr}_하객안내문(${nameStr}님)`;
-  else if(nameStr) name = `하객안내문(${nameStr}님)`;
-  else if(dateStr) name = `${dateStr}_하객안내문`;
-  else name = '모먼트웍스_하객안내문';
-  // 파일명으로 쓸 수 없는 문자는 안전하게 치환
-  return name.replace(/[\\/:*?"<>|]/g, '_');
+function splitLines(str){
+  return String(str).split('\n').map(s=>s.trim()).filter(Boolean);
 }
 
 function buildRowsHtml(){
@@ -1477,25 +1453,26 @@ function buildRowsHtml(){
 
   const parkingWay = v('f_parking_way'), parkingTime = v('f_parking_time');
   if(parkingWay || parkingTime){
+    // 주차 등록 방법은 줄바꿈으로 입력한 만큼 안내문에도 각각 줄로 나뉘어 표시된다.
     const parts = [];
-    if(parkingWay) parts.push(parkingWay);
+    if(parkingWay) parts.push(...splitLines(parkingWay));
     if(parkingTime) parts.push(`무료주차 ${parkingTime}`);
     rows.push({icon:'i-car', color:'c-parking', title:'주차 정산', bodyParts:parts});
   }
   const atm = v('f_atm');
-  if(atm) rows.push({icon:'i-card', color:'c-atm', title:'ATM 위치', bodyParts:[atm]});
+  if(atm) rows.push({icon:'i-card', color:'c-atm', title:'ATM 위치', bodyParts:splitLines(atm)});
 
   const hall = v('f_hall');
-  if(hall) rows.push({icon:'i-pin', color:'c-hall', title:'연회장 위치', bodyParts:[hall]});
+  if(hall) rows.push({icon:'i-pin', color:'c-hall', title:'연회장 위치', bodyParts:splitLines(hall)});
 
   const brideRoom = v('f_bride_room');
-  if(brideRoom) rows.push({icon:'i-door', color:'c-bride', title:'신부대기실', bodyParts:[brideRoom]});
+  if(brideRoom) rows.push({icon:'i-door', color:'c-bride', title:'신부대기실', bodyParts:splitLines(brideRoom)});
 
   const mealTime = v('f_meal_time');
-  if(mealTime) rows.push({icon:'i-fork', color:'c-meal', title:'식사 가능 시간', bodyParts:[mealTime]});
+  if(mealTime) rows.push({icon:'i-fork', color:'c-meal', title:'식사 가능 시간', bodyParts:splitLines(mealTime)});
 
   const childTicket = v('f_child_ticket');
-  if(childTicket) rows.push({icon:'i-ticket', color:'c-child', title:'소인식권', bodyParts:[childTicket]});
+  if(childTicket) rows.push({icon:'i-ticket', color:'c-child', title:'소인식권', bodyParts:splitLines(childTicket)});
 
   return rows.map(r => `
     <div class="sheet-row">
@@ -1637,23 +1614,6 @@ document.getElementById('printBtn').addEventListener('click', async ()=>{
     btn.disabled = false;
   }
   fitAllSheetsToPage();
-
-  /* 인쇄/"PDF로 저장" 대화상자에서 제안되는 파일명은 브라우저가
-     document.title 값을 그대로 가져다 쓰므로, 인쇄 직전에만 제목을
-     "날짜_하객안내문(계약자이름님)" 형태로 바꿔주고 끝나면 원래
-     탭 제목으로 되돌린다. */
-  const prevTitle = document.title;
-  document.title = buildPrintFilename();
-  let restored = false;
-  const restoreTitle = ()=>{
-    if(restored) return;
-    restored = true;
-    document.title = prevTitle;
-    window.removeEventListener('afterprint', restoreTitle);
-  };
-  window.addEventListener('afterprint', restoreTitle);
-  setTimeout(restoreTitle, 5000); // afterprint가 안 뜨는 환경을 위한 안전장치
-
   window.print();
 });
 
